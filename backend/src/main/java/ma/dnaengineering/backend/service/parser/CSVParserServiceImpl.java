@@ -16,7 +16,8 @@ import java.util.List;
 @Service
 public class CSVParserServiceImpl implements Parser<Employee> {
 
-	private static final int EXPECTED_FIELD_COUNT = 4;
+	private static int EXPECTED_FIELD_COUNT;
+
 	@Override
 	public List<Employee> parseFile(MultipartFile file) {
 		List<Employee> employees = new ArrayList<>();
@@ -27,25 +28,33 @@ public class CSVParserServiceImpl implements Parser<Employee> {
 			while ((line = br.readLine()) != null) {
 				lineNumber++;
 				if (lineNumber == 1) {
+					EXPECTED_FIELD_COUNT = getFirstLineExpectedFieldCount(line);
 					continue;
 				}
 				Employee employee = getEmployee(line, lineNumber);
-				employees.add(employee);
+				if (employee != null)
+					employees.add(employee);
 			}
 		} catch (Exception e) {
-			log.error("Failed to parse CSV file: ",e);
-			throw new CSVFileException("Failed to parse CSV file: " + e.getMessage(),e);
+			log.error("Failed to parse CSV file: ", e);
+			throw new CSVFileException("Failed to parse CSV file: " + e.getMessage(), e);
 		}
 		return employees;
 	}
 
+	private int getFirstLineExpectedFieldCount(String line) {
+		return line.split(",").length;
+	}
+
 	private Employee getEmployee(String line, int lineNumber) {
 		String[] fields = line.split(",");
-		if (fields.length != EXPECTED_FIELD_COUNT) {
+		if (fields.length == 1) {
+			return null;
+		} else if (fields.length != EXPECTED_FIELD_COUNT) {
 			throw new CSVFileException("Invalid CSV file format at line " + lineNumber);
 		}
 
-		Double id =  Double.parseDouble(fields[0]);
+		Double id = Double.parseDouble(fields[0]);
 		String name = fields[1];
 		String jobTitle = fields[2];
 		Double salary = Double.parseDouble(fields[3]);
