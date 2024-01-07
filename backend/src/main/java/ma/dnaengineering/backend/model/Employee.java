@@ -1,4 +1,4 @@
-lspackage ma.dnaengineering.backend.model;
+package ma.dnaengineering.backend.model;
 
 import lombok.*;
 

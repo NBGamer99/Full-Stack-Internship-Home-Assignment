@@ -14,4 +14,5 @@ import java.util.List;
 public class UploadResponse {
     private List<Employee> employees;
     private List<JobSummary> jobSummaries;
+    private String message;
 }
