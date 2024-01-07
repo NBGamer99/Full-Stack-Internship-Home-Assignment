@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 public class CSVParserServiceImpl implements Parser<Employee> {
 
-	private static int EXPECTED_FIELD_COUNT;
+	private static final int EXPECTED_FIELD_COUNT = 4;
 
 	@Override
 	public List<Employee> parseFile(MultipartFile file) {
@@ -28,7 +28,6 @@ public class CSVParserServiceImpl implements Parser<Employee> {
 			while ((line = br.readLine()) != null) {
 				lineNumber++;
 				if (lineNumber == 1) {
-					EXPECTED_FIELD_COUNT = getFirstLineExpectedFieldCount(line);
 					continue;
 				}
 				Employee employee = getEmployee(line, lineNumber);
@@ -40,10 +39,6 @@ public class CSVParserServiceImpl implements Parser<Employee> {
 			throw new CSVFileException("Failed to parse CSV file: " + e.getMessage(), e);
 		}
 		return employees;
-	}
-
-	private int getFirstLineExpectedFieldCount(String line) {
-		return line.split(",").length;
 	}
 
 	private Employee getEmployee(String line, int lineNumber) {
