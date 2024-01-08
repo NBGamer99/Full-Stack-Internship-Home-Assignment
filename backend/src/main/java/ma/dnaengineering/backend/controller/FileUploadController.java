@@ -16,7 +16,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1")
-@CrossOrigin
 @Slf4j
 public class FileUploadController {
 	private final CSVParserServiceImpl csvParserService;
@@ -45,7 +44,7 @@ public class FileUploadController {
 
 			dataDTO.setEmployees(csvParserService.parseFile(file));
 			dataDTO.setJobSummaries(dataProcessingService.calculateAverageSalaryByJobTitle(dataDTO.getEmployees()));
-			UploadResponse uploadResponse = UploadResponse.builder().message("File Uploaded Successfully").build();
+			UploadResponse uploadResponse = UploadResponse.builder().employees(dataDTO.getEmployees()).jobSummaries(dataDTO.getJobSummaries()).message("File Uploaded Successfully").build();
 			log.info("File uploaded successfully : {}", file.getOriginalFilename());
 			return new ResponseEntity<>(uploadResponse, HttpStatus.OK);
 
@@ -55,24 +54,4 @@ public class FileUploadController {
 			return new ResponseEntity<>(uploadResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
-	@GetMapping("/employees")
-	public ResponseEntity<UploadResponse> getEmployeesData() {
-		UploadResponse uploadResponse = UploadResponse.builder().employees(dataDTO.getEmployees()).build();
-		return new ResponseEntity<>(uploadResponse, HttpStatus.OK);
-	}
-
-	@GetMapping("/jobs")
-	public ResponseEntity<UploadResponse> getJobsData() {
-		UploadResponse uploadResponse = UploadResponse.builder().jobSummaries(dataDTO.getJobSummaries()).build();
-		return new ResponseEntity<>(uploadResponse, HttpStatus.OK);
-	}
-
-	@GetMapping("/data")
-	public ResponseEntity<UploadResponse> getProcessedData() {
-		UploadResponse uploadResponse = UploadResponse.builder().jobSummaries(dataDTO.getJobSummaries()).employees(dataDTO.getEmployees()).build();
-		return new ResponseEntity<>(uploadResponse, HttpStatus.OK);
-	}
-
-
 }

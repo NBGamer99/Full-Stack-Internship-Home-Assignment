@@ -20,6 +20,7 @@ public class DataProcessingServiceImpl implements DataProcessing {
 
 		for (Map.Entry<String, List<Employee>> entry : employeesByJobTitle.entrySet()) {
 			double averageSalary = entry.getValue().stream().mapToDouble(Employee::getSalary).average().orElse(0);
+			averageSalary = Double.parseDouble(String.format("%.2f", averageSalary));
 
 			JobSummary jobSummary = JobSummary.builder()
 					.jobTitle(entry.getKey())
